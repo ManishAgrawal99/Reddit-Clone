@@ -12,8 +12,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "Users")
 public class User {
 	
-	@Id
-	private String userId;
+//	@Id
+//	private String userId;
 	
 	
 	@NotBlank(message = "Username is Required")
@@ -23,7 +23,7 @@ public class User {
 	@NotBlank(message = "Password is Required")
 	private String password;
 	
-	
+	@Id
 	@Email
 	@NotEmpty(message = "Email is required")
 	private String email;
@@ -33,11 +33,10 @@ public class User {
 	
 	private Boolean enabled;
 
-	public User(String userId, @NotBlank(message = "Username is Required") String userName,
+	public User(@NotBlank(message = "Username is Required") String userName,
 			@NotBlank(message = "Password is Required") String password,
 			@Email @NotEmpty(message = "Email is required") String email, Instant created, Boolean enabled) {
 		super();
-		this.userId = userId;
 		this.userName = userName;
 		this.password = password;
 		this.email = email;
@@ -48,13 +47,7 @@ public class User {
 	public User() {
 	}
 
-	public String getUserId() {
-		return userId;
-	}
-
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
+	
 
 	public String getUserName() {
 		return userName;

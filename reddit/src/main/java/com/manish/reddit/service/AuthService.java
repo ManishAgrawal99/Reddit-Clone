@@ -1,6 +1,7 @@
 package com.manish.reddit.service;
 
 import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.manish.reddit.dto.RegisterRequest;
+import com.manish.reddit.exception.SpringRedditException;
 import com.manish.reddit.model.NotificationEmail;
 import com.manish.reddit.model.User;
 import com.manish.reddit.model.VerificationToken;
@@ -74,5 +76,25 @@ public class AuthService {
 		
 		return verString;
 		
+	}
+	
+	
+	public void verifyAccount(String token) {
+		Optional<VerificationToken> verificationToken = verificationTokenRepository.findByToken(token);
+		
+		verificationToken.orElseThrow(() -> new SpringRedditException("Invalid Token"));
+		
+		fetchUserAndEnable(verificationToken.get());
+	}
+
+
+
+	@Transactional
+	private void fetchUserAndEnable(VerificationToken verificationToken) {
+		String email = verificationToken.getUser().getEmail();
+		User user = userRepository.findByEmail(email).orElseThrow(() -> new SpringRedditException("User not found with email id --->"+ email));
+		
+		user.setEnabled(true);
+		userRepository.save(user);
 	}
 }
