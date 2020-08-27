@@ -40,6 +40,10 @@ public class AuthService {
 	@Transactional
 	public void signup( RegisterRequest registerRequest) {
 		
+		if (userRepository.findByEmail(registerRequest.getEmail()) != null) {
+			throw new SpringRedditException("The email is already registered");
+		}
+		
 		User user = new User();
 		
 		user.setUserName(registerRequest.getUserName());
