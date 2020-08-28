@@ -5,10 +5,16 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.manish.reddit.dto.AuthenticationResponse;
+import com.manish.reddit.dto.LoginRequest;
 import com.manish.reddit.dto.RegisterRequest;
 import com.manish.reddit.exception.SpringRedditException;
 import com.manish.reddit.model.NotificationEmail;
@@ -16,6 +22,7 @@ import com.manish.reddit.model.User;
 import com.manish.reddit.model.VerificationToken;
 import com.manish.reddit.repository.UserRepository;
 import com.manish.reddit.repository.VerificationTokenRepository;
+import com.manish.reddit.security.JwtProvider;
 
 @Service
 public class AuthService {
@@ -24,14 +31,17 @@ public class AuthService {
 	private final UserRepository userRepository;
 	private final VerificationTokenRepository verificationTokenRepository;
 	private final MailService mailService;
-	
+	private final AuthenticationManager authenticationManager;
+	private final JwtProvider jwtProvider;
 	
 	@Autowired
-	public AuthService(PasswordEncoder passwordEncoder, UserRepository userRepository, VerificationTokenRepository verificationTokenRepository, MailService mailService) {
+	public AuthService(PasswordEncoder passwordEncoder, UserRepository userRepository, VerificationTokenRepository verificationTokenRepository, MailService mailService, AuthenticationManager authenticationManager, JwtProvider jwtProvider) {
+		this.authenticationManager = authenticationManager;
 		this.passwordEncoder = passwordEncoder;
 		this.userRepository = userRepository;
 		this.verificationTokenRepository = verificationTokenRepository;
 		this.mailService = mailService;
+		this.jwtProvider = jwtProvider;
 	}
 
 
@@ -100,5 +110,18 @@ public class AuthService {
 		
 		user.setEnabled(true);
 		userRepository.save(user);
+	}
+	
+	
+	public AuthenticationResponse login(LoginRequest loginRequest) {
+		
+		Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+		
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+		
+		String token = jwtProvider.generateToken(authentication);
+		
+		return new AuthenticationResponse(token, loginRequest.getEmail());
+		
 	}
 }
