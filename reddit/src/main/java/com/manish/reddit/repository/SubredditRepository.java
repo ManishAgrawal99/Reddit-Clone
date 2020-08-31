@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 import com.manish.reddit.model.Subreddit;
 
-public interface SubredditRepository extends MongoRepository<Subreddit, Long> {
+public interface SubredditRepository extends MongoRepository<Subreddit, String> {
 	
 	Optional<Subreddit> findByName(String subredditName);
 }

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.manish.reddit.dto.SubredditDto;
+import com.manish.reddit.exception.SpringRedditException;
 import com.manish.reddit.model.Subreddit;
 import com.manish.reddit.repository.SubredditRepository;
 
@@ -41,6 +42,14 @@ public class SubredditService {
 //						   .map(this::mapToDto)
 //						   .collect(Collectors.toList());
 		return subredditRepository.findAll();
+	}
+	
+	
+	public Subreddit getSubreddit(String id) {
+		
+		return subredditRepository.findById(id)
+								  .orElseThrow(()-> new SpringRedditException("No subreddit found with the ID: "+id));
+	
 	}
 	
 	private SubredditDto mapToDto(Subreddit subreddit) {
