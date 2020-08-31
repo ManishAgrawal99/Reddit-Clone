@@ -12,7 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Subreddit {
 
 	@Id
-	private Long id;
+	private String id;
 	
 	@NotBlank(message = "Name cannot be blank")
 	private String name;
@@ -30,7 +30,7 @@ public class Subreddit {
 		super();
 	}
 
-	public Subreddit(Long id, @NotBlank(message = "Name cannot be blank") String name,
+	public Subreddit(String id, @NotBlank(message = "Name cannot be blank") String name,
 			@NotBlank(message = "Description cannot be blank") String description, List<Post> posts, User user) {
 		super();
 		this.id = id;
@@ -40,11 +40,11 @@ public class Subreddit {
 		this.user = user;
 	}
 
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
