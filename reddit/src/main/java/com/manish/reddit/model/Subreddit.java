@@ -21,7 +21,7 @@ public class Subreddit {
 	@NotBlank(message = "Description cannot be blank")
 	private String description;
 	
-	@DBRef(lazy = true)
+	@DBRef
 	private List<Post> posts;
 	
 	private User user;

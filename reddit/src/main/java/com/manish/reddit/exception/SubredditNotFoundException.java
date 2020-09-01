@@ -1,0 +1,13 @@
+package com.manish.reddit.exception;
+
+public class SubredditNotFoundException extends RuntimeException {
+	
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 4175338545114236885L;
+
+	public SubredditNotFoundException(String message) {
+        super(message);
+    }
+}

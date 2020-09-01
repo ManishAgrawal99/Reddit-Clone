@@ -8,9 +8,9 @@ import com.manish.reddit.model.Post;
 import com.manish.reddit.model.Subreddit;
 import com.manish.reddit.model.User;
 
-public interface PostRepository extends MongoRepository<Post, Long> {
+public interface PostRepository extends MongoRepository<Post, String> {
 
-	List<Post> findAllBySubreddit(Subreddit subreddit);
+	//List<Post> findAllBySubreddit(Subreddit subreddit);
 	
 	List<Post> findByUser(User user);
 }

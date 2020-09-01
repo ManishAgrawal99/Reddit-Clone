@@ -14,7 +14,7 @@ import javax.validation.constraints.NotBlank;
 public class Post {
 
 	@Id
-	private long postId;
+	private String postId;
 
 	@NotBlank(message = "Post Name Cannot be Blank")
 	private String postName;
@@ -31,13 +31,13 @@ public class Post {
 
 	private Instant createdDate;
 
-	private Subreddit subreddit;
+	private String subredditId;
 
 	@DBRef
 	private List<Comment> comments;
 
-	public Post(long postId, @NotBlank(message = "Post Name Cannot be Blank") String postName, String url,
-			String description, Integer voteCount, User user, Instant createdDate, Subreddit subreddit,
+	public Post(String postId, @NotBlank(message = "Post Name Cannot be Blank") String postName, String url,
+			String description, Integer voteCount, User user, Instant createdDate, String subredditId,
 			List<Comment> comments) {
 		super();
 		this.postId = postId;
@@ -47,7 +47,7 @@ public class Post {
 		this.voteCount = voteCount;
 		this.user = user;
 		this.createdDate = createdDate;
-		this.subreddit = subreddit;
+		this.subredditId = subredditId;
 		this.comments = comments;
 	}
 
@@ -63,11 +63,11 @@ public class Post {
 		this.comments = comments;
 	}
 
-	public long getPostId() {
+	public String getPostId() {
 		return postId;
 	}
 
-	public void setPostId(long postId) {
+	public void setPostId(String postId) {
 		this.postId = postId;
 	}
 
@@ -119,12 +119,14 @@ public class Post {
 		this.createdDate = createdDate;
 	}
 
-	public Subreddit getSubreddit() {
-		return subreddit;
+	public String getSubredditId() {
+		return subredditId;
 	}
 
-	public void setSubreddit(Subreddit subreddit) {
-		this.subreddit = subreddit;
+	public void setSubredditId(String subredditId) {
+		this.subredditId = subredditId;
 	}
+
+	
 
 }
