@@ -8,9 +8,9 @@ import com.manish.reddit.model.Comment;
 import com.manish.reddit.model.Post;
 import com.manish.reddit.model.User;
 
-public interface CommentRepository extends MongoRepository<Comment, Long> {
+public interface CommentRepository extends MongoRepository<Comment, String> {
 	
-	List<Comment> findByPost(Post post);
+	List<Comment> findByPostId(String postId);
 
     List<Comment> findAllByUser(User user);
 }

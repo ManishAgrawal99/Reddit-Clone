@@ -11,22 +11,22 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Comment {
 	
 	@Id
-	private Long id;
+	private String id;
 
 	@NotEmpty
 	private String text;
 	
-	private Post post;
+	private String postId;
 	
 	private Instant createdDate;
 	
 	private User user;
 
-	public Comment(Long id, @NotEmpty String text, Post post, Instant createdDate, User user) {
+	public Comment(String id, @NotEmpty String text, String postId, Instant createdDate, User user) {
 		super();
 		this.id = id;
 		this.text = text;
-		this.post = post;
+		this.postId = postId;
 		this.createdDate = createdDate;
 		this.user = user;
 	}
@@ -39,11 +39,11 @@ public class Comment {
 
 
 
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
@@ -55,12 +55,12 @@ public class Comment {
 		this.text = text;
 	}
 
-	public Post getPost() {
-		return post;
+	public String getPostId() {
+		return postId;
 	}
 
-	public void setPost(Post post) {
-		this.post = post;
+	public void setPost(String postId) {
+		this.postId = postId;
 	}
 
 	public Instant getCreatedDate() {
