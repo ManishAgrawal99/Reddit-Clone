@@ -7,31 +7,35 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Vote {
 
 	@Id
-	private Long voteId;
+	private String voteId;
 
 	private VoteType voteType;
 
-	private Post post;
+	private String postId;
 
-	private User user;
+	private String userEmail;
 
 	public Vote() {
 		super();
 	}
 
-	public Vote(Long voteId, VoteType voteType, Post post, User user) {
+	
+
+	public Vote(String voteId, VoteType voteType, String postId, String userEmail) {
 		super();
 		this.voteId = voteId;
 		this.voteType = voteType;
-		this.post = post;
-		this.user = user;
+		this.postId = postId;
+		this.userEmail = userEmail;
 	}
 
-	public Long getVoteId() {
+
+
+	public String getVoteId() {
 		return voteId;
 	}
 
-	public void setVoteId(Long voteId) {
+	public void setVoteId(String voteId) {
 		this.voteId = voteId;
 	}
 
@@ -43,20 +47,27 @@ public class Vote {
 		this.voteType = voteType;
 	}
 
-	public Post getPost() {
-		return post;
+	public String getPostId() {
+		return postId;
 	}
 
-	public void setPost(Post post) {
-		this.post = post;
+	public void setPostId(String postId) {
+		this.postId = postId;
 	}
 
-	public User getUser() {
-		return user;
+
+
+	public String getUserEmail() {
+		return userEmail;
 	}
 
-	public void setUser(User user) {
-		this.user = user;
+
+
+	public void setUserEmail(String userEmail) {
+		this.userEmail = userEmail;
 	}
 
+	
+
+	
 }

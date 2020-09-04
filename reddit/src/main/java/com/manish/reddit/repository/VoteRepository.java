@@ -10,5 +10,5 @@ import com.manish.reddit.model.Vote;
 
 public interface VoteRepository extends MongoRepository<Vote, Long> {
 	
-	Optional<Vote> findTopByPostAndUserOrderByVoteIdDesc(Post post, User currentUser);
+	Optional<Vote> findTopByPostIdAndUserEmailOrderByVoteIdDesc(String postId, String userId);
 }

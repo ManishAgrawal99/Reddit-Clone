@@ -19,6 +19,7 @@ import com.manish.reddit.dto.RegisterRequest;
 import com.manish.reddit.exception.SpringRedditException;
 import com.manish.reddit.exception.UsernameNotFoundException;
 import com.manish.reddit.model.NotificationEmail;
+import com.manish.reddit.model.RefreshTokenRequest;
 import com.manish.reddit.model.User;
 import com.manish.reddit.model.VerificationToken;
 import com.manish.reddit.repository.UserRepository;
@@ -34,17 +35,22 @@ public class AuthService {
 	private final MailService mailService;
 	private final AuthenticationManager authenticationManager;
 	private final JwtProvider jwtProvider;
+	private final RefreshTokenService refreshTokenService;
 
-	@Autowired
+	
+
 	public AuthService(PasswordEncoder passwordEncoder, UserRepository userRepository,
 			VerificationTokenRepository verificationTokenRepository, MailService mailService,
-			AuthenticationManager authenticationManager, JwtProvider jwtProvider) {
-		this.authenticationManager = authenticationManager;
+			AuthenticationManager authenticationManager, JwtProvider jwtProvider,
+			RefreshTokenService refreshTokenService) {
+		super();
 		this.passwordEncoder = passwordEncoder;
 		this.userRepository = userRepository;
 		this.verificationTokenRepository = verificationTokenRepository;
 		this.mailService = mailService;
+		this.authenticationManager = authenticationManager;
 		this.jwtProvider = jwtProvider;
+		this.refreshTokenService = refreshTokenService;
 	}
 
 	@Transactional
@@ -104,7 +110,9 @@ public class AuthService {
 		user.setEnabled(true);
 		userRepository.save(user);
 	}
-
+	
+	
+	@Transactional
 	public AuthenticationResponse login(LoginRequest loginRequest) {
 
 		Authentication authentication = authenticationManager.authenticate(
@@ -114,9 +122,13 @@ public class AuthService {
 
 		String token = jwtProvider.generateToken(authentication);
 
-		return new AuthenticationResponse(token, loginRequest.getEmail());
+		Instant expiresAt = Instant.now().plusMillis(jwtProvider.getJwtExpirationInMillis());
+		
+		return new AuthenticationResponse(token, loginRequest.getEmail(), refreshTokenService.generateRegreshToken().getToken(), expiresAt);
 
 	}
+	
+	
 
 	@Transactional(readOnly = true)
 	public User getCurrentUser() {
@@ -124,5 +136,15 @@ public class AuthService {
 				.getContext().getAuthentication().getPrincipal();
 		return userRepository.findByEmail(principal.getUsername())
 							 .orElseThrow(() -> new UsernameNotFoundException("User name not found - " + principal.getUsername()));
+	}
+
+	public AuthenticationResponse refreshToken(RefreshTokenRequest refreshTokenRequest) {
+		
+		refreshTokenService.validateRefreshToken(refreshTokenRequest.getRefreshToken());
+		
+		String token = jwtProvider.generateTokenWithUsername(refreshTokenRequest.getEmail());
+		
+		return new AuthenticationResponse(token, refreshTokenRequest.getEmail(), refreshTokenRequest.getRefreshToken(), 
+										  Instant.now().plusMillis(jwtProvider.getJwtExpirationInMillis()));
 	}
 }
