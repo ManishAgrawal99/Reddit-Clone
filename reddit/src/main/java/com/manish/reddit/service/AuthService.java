@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.manish.reddit.dto.AuthenticationResponse;
 import com.manish.reddit.dto.LoginRequest;
 import com.manish.reddit.dto.RegisterRequest;
@@ -22,6 +23,7 @@ import com.manish.reddit.model.NotificationEmail;
 import com.manish.reddit.model.RefreshTokenRequest;
 import com.manish.reddit.model.User;
 import com.manish.reddit.model.VerificationToken;
+import com.manish.reddit.producer.LibraryEventProducer;
 import com.manish.reddit.repository.UserRepository;
 import com.manish.reddit.repository.VerificationTokenRepository;
 import com.manish.reddit.security.JwtProvider;
@@ -36,13 +38,16 @@ public class AuthService {
 	private final AuthenticationManager authenticationManager;
 	private final JwtProvider jwtProvider;
 	private final RefreshTokenService refreshTokenService;
+	private final LibraryEventProducer libraryEventProducer;
+
+	
 
 	
 
 	public AuthService(PasswordEncoder passwordEncoder, UserRepository userRepository,
 			VerificationTokenRepository verificationTokenRepository, MailService mailService,
 			AuthenticationManager authenticationManager, JwtProvider jwtProvider,
-			RefreshTokenService refreshTokenService) {
+			RefreshTokenService refreshTokenService, LibraryEventProducer libraryEventProducer) {
 		super();
 		this.passwordEncoder = passwordEncoder;
 		this.userRepository = userRepository;
@@ -51,12 +56,16 @@ public class AuthService {
 		this.authenticationManager = authenticationManager;
 		this.jwtProvider = jwtProvider;
 		this.refreshTokenService = refreshTokenService;
+		this.libraryEventProducer = libraryEventProducer;
 	}
 
 	@Transactional
 	public void signup(RegisterRequest registerRequest) {
 
-		if (userRepository.findByEmail(registerRequest.getEmail()) != null) {
+		User user1 = userRepository.findByEmail(registerRequest.getEmail()).orElse(null);
+		
+		if (user1 != null) {
+			
 			throw new SpringRedditException("The email is already registered");
 		}
 
@@ -73,10 +82,18 @@ public class AuthService {
 
 		String token = generateVerificationToken(user);
 
-		mailService.sendMail(new NotificationEmail("Please Activate your Account", user.getEmail(),
+		NotificationEmail notificationEmail = new NotificationEmail("Please Activate your Account", user.getEmail(),
 				"Thank you for signing up to Spring Reddit, "
 						+ "please click on the below url to activate your account : "
-						+ "http://localhost:8080/api/auth/accountVerification/" + token));
+						+ "http://localhost:8080/api/auth/accountVerification/" + token);
+		
+		try {
+			libraryEventProducer.sendMailEvent(notificationEmail);
+		} catch (JsonProcessingException e) {
+			System.out.println("Issue at AuthService while Sending kafka Message");
+		}
+		
+		mailService.sendMail(notificationEmail);
 
 	}
 
