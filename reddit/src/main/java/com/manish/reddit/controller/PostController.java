@@ -2,6 +2,7 @@ package com.manish.reddit.controller;
 
 import java.util.List;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,6 +34,8 @@ public class PostController {
 							 .body(savedPost);
 	}
 	
+	
+	@Cacheable(key = "#id", value = "posts", unless = "#result.voteCount < 1000")
 	@GetMapping("/{id}")
 	public ResponseEntity<Post> getPost(@PathVariable String id) {
 		

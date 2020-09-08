@@ -4,6 +4,10 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+
+import org.springframework.data.redis.core.HashOperations;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,12 +28,27 @@ public class PostService {
 	private final AuthService authService;
 	
 	
+	private static final String CACHE_NAME = "Post";
 	
-	public PostService(SubredditRepository subredditRepository, AuthService authService, PostRepository postRepository) {
+	private RedisTemplate<String, Object> redisTemplate;
+	
+	private HashOperations<String, String, Post> hashOperations;
+	
+	
+	
+	
+	public PostService(SubredditRepository subredditRepository, AuthService authService, PostRepository postRepository,
+						RedisTemplate<String, Object> redisTemplate) {
 		super();
 		this.postRepository = postRepository;
 		this.subredditRepository = subredditRepository;
 		this.authService = authService;
+		this.redisTemplate = redisTemplate;
+	}
+	
+	@PostConstruct
+	public void initializeHashOperations() {
+		hashOperations = redisTemplate.opsForHash();
 	}
 
 	
@@ -62,11 +81,20 @@ public class PostService {
 		
 		subredditRepository.save(subreddit);
 		
-		return postRepository.save(post);
+		Post savedPost = postRepository.save(post);
+		
+		hashOperations.put(CACHE_NAME, savedPost.getPostId(), savedPost);
+		
+		return savedPost;
 	}
 	
 	
 	public Post getPost(String id) {
+		
+		if(hashOperations.get(CACHE_NAME, id) != null) {
+			return hashOperations.get(CACHE_NAME, id);
+		}
+		
 		Post post = postRepository.findById(id).orElseThrow(()->new PostNotFoundException("Cannot find Post with ID: "+id));
 		
 		return post;
