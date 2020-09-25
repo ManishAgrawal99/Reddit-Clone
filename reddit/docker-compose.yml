@@ -1,0 +1,31 @@
+version: '3.7'
+
+services:
+  reddit-clone-application:
+    image: manish1201/reddit:dockerfile
+    ports: 
+      - "8080:8080"
+    restart: always
+    depends_on:
+      - mongo
+    environment:
+      RDS_HOSTNAME: mongo
+    networks:
+      - reddit-clone-application-network
+    
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    restart: always
+    volumes: 
+      - mongodata-volume:/data/db
+    networks:
+      - reddit-clone-application-network
+    
+volumes:
+  mongodata-volume:
+  
+networks:
+  reddit-clone-application-network:
+  

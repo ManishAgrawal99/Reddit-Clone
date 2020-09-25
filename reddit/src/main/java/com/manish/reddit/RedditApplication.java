@@ -7,7 +7,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 
 @SpringBootApplication
 @EnableAsync
-@EnableCaching
+//@EnableCaching
 public class RedditApplication {
 
 	public static void main(String[] args) {

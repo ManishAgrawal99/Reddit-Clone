@@ -38,7 +38,7 @@ public class AuthService {
 	private final AuthenticationManager authenticationManager;
 	private final JwtProvider jwtProvider;
 	private final RefreshTokenService refreshTokenService;
-	private final LibraryEventProducer libraryEventProducer;
+//	private final LibraryEventProducer libraryEventProducer;
 
 	
 
@@ -47,7 +47,8 @@ public class AuthService {
 	public AuthService(PasswordEncoder passwordEncoder, UserRepository userRepository,
 			VerificationTokenRepository verificationTokenRepository, MailService mailService,
 			AuthenticationManager authenticationManager, JwtProvider jwtProvider,
-			RefreshTokenService refreshTokenService, LibraryEventProducer libraryEventProducer) {
+			RefreshTokenService refreshTokenService //, LibraryEventProducer libraryEventProducer
+			) {
 		super();
 		this.passwordEncoder = passwordEncoder;
 		this.userRepository = userRepository;
@@ -56,7 +57,7 @@ public class AuthService {
 		this.authenticationManager = authenticationManager;
 		this.jwtProvider = jwtProvider;
 		this.refreshTokenService = refreshTokenService;
-		this.libraryEventProducer = libraryEventProducer;
+//		this.libraryEventProducer = libraryEventProducer;
 	}
 
 	@Transactional
@@ -87,11 +88,11 @@ public class AuthService {
 						+ "please click on the below url to activate your account : "
 						+ "http://localhost:8080/api/auth/accountVerification/" + token);
 		
-		try {
-			libraryEventProducer.sendMailEvent(notificationEmail);
-		} catch (JsonProcessingException e) {
-			System.out.println("Issue at AuthService while Sending kafka Message");
-		}
+//		try {
+//			libraryEventProducer.sendMailEvent(notificationEmail);
+//		} catch (JsonProcessingException e) {
+//			System.out.println("Issue at AuthService while Sending kafka Message");
+//		}
 		
 		mailService.sendMail(notificationEmail);
 

@@ -35,7 +35,7 @@ public class PostController {
 	}
 	
 	
-	@Cacheable(key = "#id", value = "posts", unless = "#result.voteCount < 1000")
+	//@Cacheable(key = "#id", value = "posts", unless = "#result.voteCount < 1000")
 	@GetMapping("/{id}")
 	public ResponseEntity<Post> getPost(@PathVariable String id) {
 		
