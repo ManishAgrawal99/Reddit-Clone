@@ -1,0 +1,39 @@
+version: '3.7'
+services:
+  naming-server:
+    image: manish1201/zuul-api-gateway-server:0.0.1-SNAPSHOT
+#    build:
+#      context: netflix-eureka-naming-server
+#      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    restart: always
+    networks:
+      - reddit-docker-network
+    depends_on: 
+      - mongo
+  
+  subreddit-service:
+    image: manish1201/subreddit-service:0.0.1-SNAPSHOT
+#    build:
+#      context: netflix-eureka-naming-server
+#      dockerfile: Dockerfile
+    ports:
+      - "8100:8100"
+    restart: always
+    networks:
+      - reddit-docker-network
+    depends_on: 
+      - mongo
+      - naming-server
+      
+  mongo:
+    image: mongo:latest
+    ports: 
+      - "27017:27017"
+    restart: always
+    networks:
+      - reddit-docker-network
+
+networks:
+  reddit-docker-network:
