@@ -1,6 +1,6 @@
 version: '3.7'
 services:
-  naming-server:
+  zuul-service:
     image: manish1201/zuul-api-gateway-server:0.0.1-SNAPSHOT
 #    build:
 #      context: netflix-eureka-naming-server
@@ -9,7 +9,7 @@ services:
       - "8000:8000"
     restart: always
     networks:
-      - reddit-docker-network
+      - reddit-network
     depends_on: 
       - mongo
   
@@ -22,10 +22,10 @@ services:
       - "8100:8100"
     restart: always
     networks:
-      - reddit-docker-network
+      - reddit-network
     depends_on: 
       - mongo
-      - naming-server
+      - zuul-service
       
   mongo:
     image: mongo:latest
@@ -33,7 +33,7 @@ services:
       - "27017:27017"
     restart: always
     networks:
-      - reddit-docker-network
+      - reddit-network
 
 networks:
-  reddit-docker-network:
+  reddit-network:
