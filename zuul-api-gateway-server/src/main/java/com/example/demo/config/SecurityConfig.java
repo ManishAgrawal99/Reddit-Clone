@@ -43,7 +43,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	    // Allow eureka client to be accessed without authentication
 	    web.ignoring().antMatchers("/*/")//
 	            .antMatchers("/eureka/**")//
-	            .antMatchers("/swagger-ui.html/**")
 	            .antMatchers(HttpMethod.OPTIONS, "/**"); // Request type options should be allowed.
 	}
 	
